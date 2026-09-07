@@ -2,6 +2,13 @@
 
 **Estado: congelada.** Fijada el 7 de septiembre de 2026, antes de la primera predicción registrada.
 
+**Revisión del 7 de septiembre de 2026, aún sin ninguna predicción emitida:** la fuente de precio
+de cripto pasa de Binance a **Coinbase Exchange**. Motivo: Binance geobloquea las IPs de centros
+de datos estadounidenses, donde se ejecuta el cron, así que la ingesta era imposible desde
+producción. Se comprobó empíricamente que los cierres de Coinbase coinciden con los de Binance
+con una desviación máxima del 0,12% en BTC, ETH y SOL, y sin barras degeneradas. Como el registro
+estaba vacío, el cambio no afecta a ningún histórico.
+
 Este documento define, de forma determinista y sin margen de interpretación, cómo se emite y cómo se resuelve cada predicción. Cambiar cualquier regla de aquí invalida la comparabilidad del histórico: **una modificación exige una versión nueva del documento y una versión nueva de la política (`resolver_version`), y el histórico anterior se sigue evaluando con la versión con la que se emitió.**
 
 ---

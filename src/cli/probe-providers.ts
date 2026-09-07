@@ -8,9 +8,9 @@ interface Probe {
 }
 
 const PROBES: Probe[] = [
-  { provider: 'binance', providerSymbol: 'BTCUSDT', label: 'BTC' },
-  { provider: 'binance', providerSymbol: 'ETHUSDT', label: 'ETH' },
-  { provider: 'binance', providerSymbol: 'SOLUSDT', label: 'SOL' },
+  { provider: 'coinbase', providerSymbol: 'BTC-USD', label: 'BTC' },
+  { provider: 'coinbase', providerSymbol: 'ETH-USD', label: 'ETH' },
+  { provider: 'coinbase', providerSymbol: 'SOL-USD', label: 'SOL' },
   { provider: 'yahoo', providerSymbol: 'SPY', label: 'SPY' },
   { provider: 'yahoo', providerSymbol: 'QQQ', label: 'QQQ' },
   { provider: 'yahoo', providerSymbol: 'NVDA', label: 'NVDA' },

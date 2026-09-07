@@ -9,7 +9,7 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   API_PORT: z.coerce.number().int().positive().default(3311),
   API_HOST: z.string().default('127.0.0.1'),
-  PROVIDER_CRYPTO: z.string().default('binance'),
+  PROVIDER_CRYPTO: z.string().default('coinbase'),
   PROVIDER_EQUITY: z.string().default('yahoo'),
   PROVIDER_ETF: z.string().default('yahoo'),
   PROVIDER_INDEX: z.string().default('yahoo'),

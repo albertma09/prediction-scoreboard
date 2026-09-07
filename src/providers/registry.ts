@@ -1,11 +1,13 @@
 import { providerFor } from '../config/index.js';
 import type { AssetClass } from '../config/index.js';
 import { binanceProvider } from './binance.js';
+import { coinbaseProvider } from './coinbase.js';
 import { yahooProvider } from './yahoo.js';
 import type { PriceProvider } from './PriceProvider.js';
 
 const providers = new Map<string, PriceProvider>([
   [binanceProvider.key, binanceProvider],
+  [coinbaseProvider.key, coinbaseProvider],
   [yahooProvider.key, yahooProvider],
 ]);
 

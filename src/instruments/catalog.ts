@@ -41,6 +41,8 @@ export async function upsertInstrument(seed: InstrumentSeed): Promise<number> {
        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, case when $9 then now() else null end)
        on conflict (symbol) do update set
          name = excluded.name,
+         provider = excluded.provider,
+         provider_symbol = excluded.provider_symbol,
          exchange = excluded.exchange,
          currency = excluded.currency,
          session_tz = excluded.session_tz
