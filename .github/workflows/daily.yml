@@ -62,7 +62,8 @@ jobs:
         run: npm --prefix panel ci
 
       - name: Compilar panel
-        run: npm --prefix panel run build -- --base-href=/prediction-scoreboard/
+        run: npm --prefix panel run build -- --base-href="/${{ github.event.repository.name }}/"
+
 
       - uses: actions/configure-pages@v5
 
