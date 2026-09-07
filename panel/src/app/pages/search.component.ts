@@ -30,6 +30,11 @@ import type { CatalogEntry, MetaResponse, SearchHit } from '../api.types';
           predicciones registradas · datos del {{ info.generatedAt.slice(0, 10) }}
         </p>
       }
+      <p style="margin: 0.75rem 0 0;">
+        <a routerLink="/catalogo"
+          >Ver todos los activos organizados por categoría &rarr;</a
+        >
+      </p>
     </div>
 
     <div aria-live="polite" aria-atomic="true">
@@ -75,7 +80,9 @@ import type { CatalogEntry, MetaResponse, SearchHit } from '../api.types';
     <h2 style="margin-top: 2rem;">Universo puntuable</h2>
     <p class="muted">
       Los únicos activos sobre los que se emiten predicciones registradas cada día. De aquí, y
-      solo de aquí, sale el track record.
+      solo de aquí, sale el track record. El resto del catálogo es consultable —verás una
+      estimación— pero nadie comprueba si acierta:
+      <a routerLink="/catalogo">míralos por categoría</a>.
     </p>
 
     @if (tracked().length > 0) {
@@ -142,7 +149,7 @@ export class SearchComponent {
       this.results.set([]);
       return;
     }
-    this.data.search(value, 12).subscribe({
+    this.data.search(value, 25).subscribe({
       next: (hits) => this.results.set(hits),
       error: () => this.results.set([]),
     });

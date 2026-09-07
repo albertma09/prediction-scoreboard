@@ -1,10 +1,13 @@
 export type AssetClass = 'crypto' | 'equity' | 'etf' | 'index' | 'fx';
 
+export type InstrumentCategory = 'crypto' | 'commodity' | 'equity' | 'etf' | 'index';
+
 export interface CatalogEntry {
   symbol: string;
   slug: string;
   name: string;
   assetClass: AssetClass;
+  category: InstrumentCategory;
   exchange: string | null;
   currency: string;
   isTracked: boolean;
@@ -24,6 +27,7 @@ export interface MetaResponse {
   generatedAt: string;
   instruments: number;
   trackedInstruments: number;
+  categories: Record<InstrumentCategory, number>;
   ledgerPredictions: number;
   ledgerOk: boolean;
   backtestObservations: number;

@@ -4,18 +4,32 @@ import type { AssetClass } from '../config/index.js';
 
 export const assetClassSchema = z.enum(['crypto', 'equity', 'etf', 'index', 'fx']);
 
-export const instrumentSeedSchema = z.object({
-  symbol: z.string().min(1).max(32),
-  name: z.string().min(1),
-  assetClass: assetClassSchema,
-  provider: z.string().min(1),
-  providerSymbol: z.string().min(1),
-  exchange: z.string().nullable().optional(),
-  currency: z.string().length(3).default('USD'),
-  sessionTz: z.string().min(1).default('UTC'),
-  tracked: z.boolean().default(false),
-  aliases: z.array(z.string().min(1)).default([]),
-});
+export const categorySchema = z.enum(['crypto', 'commodity', 'equity', 'etf', 'index']);
+
+export type InstrumentCategory = z.infer<typeof categorySchema>;
+
+export function fallbackCategory(assetClass: z.infer<typeof assetClassSchema>): InstrumentCategory {
+  return assetClass === 'fx' ? 'etf' : assetClass;
+}
+
+export const instrumentSeedSchema = z
+  .object({
+    symbol: z.string().min(1).max(32),
+    name: z.string().min(1),
+    assetClass: assetClassSchema,
+    provider: z.string().min(1),
+    providerSymbol: z.string().min(1),
+    exchange: z.string().nullable().optional(),
+    currency: z.string().length(3).default('USD'),
+    sessionTz: z.string().min(1).default('UTC'),
+    tracked: z.boolean().default(false),
+    category: categorySchema.optional(),
+    aliases: z.array(z.string().min(1)).default([]),
+  })
+  .transform((seed) => ({
+    ...seed,
+    category: seed.category ?? fallbackCategory(seed.assetClass),
+  }));
 
 export type InstrumentSeed = z.infer<typeof instrumentSeedSchema>;
 
@@ -24,6 +38,7 @@ export interface InstrumentRow {
   symbol: string;
   name: string;
   asset_class: AssetClass;
+  category: InstrumentCategory | null;
   provider: string;
   provider_symbol: string;
   exchange: string | null;
@@ -37,10 +52,13 @@ export async function upsertInstrument(seed: InstrumentSeed): Promise<number> {
   return withTransaction(async (client) => {
     const inserted = await client.query<{ id: number }>(
       `insert into instrument
-         (symbol, name, asset_class, provider, provider_symbol, exchange, currency, session_tz, is_tracked, tracked_since)
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, case when $9 then now() else null end)
+         (symbol, name, asset_class, provider, provider_symbol, exchange,
+          currency, session_tz, is_tracked, category, tracked_since)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+               case when $9 then now() else null end)
        on conflict (symbol) do update set
          name = excluded.name,
+         category = excluded.category,
          provider = excluded.provider,
          provider_symbol = excluded.provider_symbol,
          exchange = excluded.exchange,
@@ -57,6 +75,7 @@ export async function upsertInstrument(seed: InstrumentSeed): Promise<number> {
         seed.currency,
         seed.sessionTz,
         seed.tracked,
+        seed.category,
       ],
     );
 
@@ -86,7 +105,7 @@ export async function upsertInstrument(seed: InstrumentSeed): Promise<number> {
 
 export async function getInstrumentBySymbol(symbol: string): Promise<InstrumentRow | null> {
   return queryOne<InstrumentRow>(
-    `select id, symbol, name, asset_class, provider, provider_symbol,
+    `select id, symbol, name, asset_class, category, provider, provider_symbol,
             exchange, currency, session_tz, is_tracked, tracked_since
      from instrument
      where upper(symbol) = upper($1)`,
@@ -96,7 +115,7 @@ export async function getInstrumentBySymbol(symbol: string): Promise<InstrumentR
 
 export async function listTrackedInstruments(): Promise<InstrumentRow[]> {
   return query<InstrumentRow>(
-    `select id, symbol, name, asset_class, provider, provider_symbol,
+    `select id, symbol, name, asset_class, category, provider, provider_symbol,
             exchange, currency, session_tz, is_tracked, tracked_since
      from instrument
      where is_tracked = true
@@ -106,7 +125,7 @@ export async function listTrackedInstruments(): Promise<InstrumentRow[]> {
 
 export async function listAllInstruments(): Promise<InstrumentRow[]> {
   return query<InstrumentRow>(
-    `select id, symbol, name, asset_class, provider, provider_symbol,
+    `select id, symbol, name, asset_class, category, provider, provider_symbol,
             exchange, currency, session_tz, is_tracked, tracked_since
      from instrument
      order by is_tracked desc, asset_class, symbol`,
@@ -119,7 +138,7 @@ export async function setTracked(symbol: string, tracked: boolean): Promise<Inst
      set is_tracked = $2,
          tracked_since = case when $2 then coalesce(tracked_since, now()) else null end
      where upper(symbol) = upper($1)
-     returning id, symbol, name, asset_class, provider, provider_symbol,
+     returning id, symbol, name, asset_class, category, provider, provider_symbol,
                exchange, currency, session_tz, is_tracked, tracked_since`,
     [symbol, tracked],
   );

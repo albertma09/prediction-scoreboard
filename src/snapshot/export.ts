@@ -1,7 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { query } from '../db/pool.js';
-import { listAllInstruments } from '../instruments/catalog.js';
+import { fallbackCategory, listAllInstruments } from '../instruments/catalog.js';
+import type { InstrumentCategory, InstrumentRow } from '../instruments/catalog.js';
 import { consultationsFor } from '../consult/generate.js';
 import { buildSliceReports, calibrationFor, loadBacktestScores } from '../eval/report.js';
 import { emissionHistory } from '../schedule/emit.js';
@@ -45,6 +46,21 @@ export interface SnapshotReport {
   bytes: number;
   instruments: number;
   generatedAt: string;
+}
+
+const CATEGORY_ORDER: InstrumentCategory[] = ['crypto', 'commodity', 'equity', 'etf', 'index'];
+
+function countByCategory(instruments: InstrumentRow[]): Record<InstrumentCategory, number> {
+  const counts = Object.fromEntries(
+    CATEGORY_ORDER.map((category) => [category, 0]),
+  ) as Record<InstrumentCategory, number>;
+
+  for (const instrument of instruments) {
+    const category = instrument.category ?? fallbackCategory(instrument.asset_class);
+    counts[category] += 1;
+  }
+
+  return counts;
 }
 
 export async function exportSnapshot(root: string): Promise<SnapshotReport> {
@@ -93,6 +109,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
       slug: slugFor(instrument.symbol),
       name: instrument.name,
       assetClass: instrument.asset_class,
+      category: instrument.category ?? fallbackCategory(instrument.asset_class),
       exchange: instrument.exchange,
       currency: instrument.currency,
       isTracked: instrument.is_tracked,
@@ -331,6 +348,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
     generatedAt,
     instruments: instruments.length,
     trackedInstruments: instruments.filter((instrument) => instrument.is_tracked).length,
+    categories: countByCategory(instruments),
     ledgerPredictions: chain.checked,
     ledgerOk: chain.ok,
     backtestObservations: backtest?.observations ?? 0,
