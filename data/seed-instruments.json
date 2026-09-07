@@ -1,0 +1,1240 @@
+[
+  {
+    "symbol": "BTCUSD",
+    "name": "Bitcoin",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "BTCUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "tracked": true,
+    "aliases": [
+      "bitcoin",
+      "btc",
+      "BTC-USD",
+      "bitcoin usd"
+    ]
+  },
+  {
+    "symbol": "ETHUSD",
+    "name": "Ethereum",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "ETHUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "tracked": true,
+    "aliases": [
+      "ethereum",
+      "eth",
+      "ether",
+      "ETH-USD"
+    ]
+  },
+  {
+    "symbol": "SOLUSD",
+    "name": "Solana",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "SOLUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "tracked": true,
+    "aliases": [
+      "solana",
+      "sol",
+      "SOL-USD"
+    ]
+  },
+  {
+    "symbol": "SPY",
+    "name": "SPDR S&P 500 ETF Trust",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "SPY",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "tracked": true,
+    "aliases": [
+      "sp500",
+      "s&p 500",
+      "sp 500",
+      "spx",
+      "standard and poors 500"
+    ]
+  },
+  {
+    "symbol": "NVDA",
+    "name": "NVIDIA Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "NVDA",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "tracked": true,
+    "aliases": [
+      "nvidia",
+      "nvda"
+    ]
+  },
+  {
+    "symbol": "XRPUSD",
+    "name": "XRP",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "XRPUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "xrp",
+      "ripple"
+    ]
+  },
+  {
+    "symbol": "BNBUSD",
+    "name": "BNB",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "BNBUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "bnb",
+      "binance coin"
+    ]
+  },
+  {
+    "symbol": "ADAUSD",
+    "name": "Cardano",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "ADAUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "cardano",
+      "ada"
+    ]
+  },
+  {
+    "symbol": "DOGEUSD",
+    "name": "Dogecoin",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "DOGEUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "dogecoin",
+      "doge"
+    ]
+  },
+  {
+    "symbol": "AVAXUSD",
+    "name": "Avalanche",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "AVAXUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "avalanche",
+      "avax"
+    ]
+  },
+  {
+    "symbol": "LINKUSD",
+    "name": "Chainlink",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "LINKUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "chainlink",
+      "link"
+    ]
+  },
+  {
+    "symbol": "DOTUSD",
+    "name": "Polkadot",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "DOTUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "polkadot",
+      "dot"
+    ]
+  },
+  {
+    "symbol": "POLUSD",
+    "name": "Polygon (POL)",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "POLUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "polygon",
+      "pol",
+      "matic"
+    ]
+  },
+  {
+    "symbol": "LTCUSD",
+    "name": "Litecoin",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "LTCUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "litecoin",
+      "ltc"
+    ]
+  },
+  {
+    "symbol": "ATOMUSD",
+    "name": "Cosmos",
+    "assetClass": "crypto",
+    "provider": "binance",
+    "providerSymbol": "ATOMUSDT",
+    "exchange": "Binance",
+    "currency": "USD",
+    "sessionTz": "UTC",
+    "aliases": [
+      "cosmos",
+      "atom"
+    ]
+  },
+  {
+    "symbol": "AAPL",
+    "name": "Apple Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "AAPL",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "apple"
+    ]
+  },
+  {
+    "symbol": "MSFT",
+    "name": "Microsoft Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "MSFT",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "microsoft"
+    ]
+  },
+  {
+    "symbol": "GOOGL",
+    "name": "Alphabet Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "GOOGL",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "google",
+      "alphabet"
+    ]
+  },
+  {
+    "symbol": "AMZN",
+    "name": "Amazon.com Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "AMZN",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "amazon"
+    ]
+  },
+  {
+    "symbol": "META",
+    "name": "Meta Platforms Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "META",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "meta",
+      "facebook"
+    ]
+  },
+  {
+    "symbol": "TSLA",
+    "name": "Tesla Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "TSLA",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "tesla"
+    ]
+  },
+  {
+    "symbol": "AMD",
+    "name": "Advanced Micro Devices Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "AMD",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "amd"
+    ]
+  },
+  {
+    "symbol": "INTC",
+    "name": "Intel Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "INTC",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "intel"
+    ]
+  },
+  {
+    "symbol": "NFLX",
+    "name": "Netflix Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "NFLX",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "netflix"
+    ]
+  },
+  {
+    "symbol": "JPM",
+    "name": "JPMorgan Chase & Co.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "JPM",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "jpmorgan",
+      "jp morgan"
+    ]
+  },
+  {
+    "symbol": "V",
+    "name": "Visa Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "V",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "visa"
+    ]
+  },
+  {
+    "symbol": "MA",
+    "name": "Mastercard Incorporated",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "MA",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "mastercard"
+    ]
+  },
+  {
+    "symbol": "JNJ",
+    "name": "Johnson & Johnson",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "JNJ",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "johnson"
+    ]
+  },
+  {
+    "symbol": "WMT",
+    "name": "Walmart Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "WMT",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "walmart"
+    ]
+  },
+  {
+    "symbol": "XOM",
+    "name": "Exxon Mobil Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "XOM",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "exxon"
+    ]
+  },
+  {
+    "symbol": "KO",
+    "name": "The Coca-Cola Company",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "KO",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "coca cola",
+      "cocacola"
+    ]
+  },
+  {
+    "symbol": "PEP",
+    "name": "PepsiCo Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "PEP",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "pepsi",
+      "pepsico"
+    ]
+  },
+  {
+    "symbol": "DIS",
+    "name": "The Walt Disney Company",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "DIS",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "disney"
+    ]
+  },
+  {
+    "symbol": "BA",
+    "name": "The Boeing Company",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "BA",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "boeing"
+    ]
+  },
+  {
+    "symbol": "CAT",
+    "name": "Caterpillar Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "CAT",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "caterpillar"
+    ]
+  },
+  {
+    "symbol": "GE",
+    "name": "GE Aerospace",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "GE",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "general electric"
+    ]
+  },
+  {
+    "symbol": "PFE",
+    "name": "Pfizer Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "PFE",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "pfizer"
+    ]
+  },
+  {
+    "symbol": "MRK",
+    "name": "Merck & Co. Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "MRK",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "merck"
+    ]
+  },
+  {
+    "symbol": "LLY",
+    "name": "Eli Lilly and Company",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "LLY",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "eli lilly",
+      "lilly"
+    ]
+  },
+  {
+    "symbol": "UNH",
+    "name": "UnitedHealth Group Incorporated",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "UNH",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "unitedhealth"
+    ]
+  },
+  {
+    "symbol": "BAC",
+    "name": "Bank of America Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "BAC",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "bank of america"
+    ]
+  },
+  {
+    "symbol": "GS",
+    "name": "The Goldman Sachs Group Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "GS",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "goldman sachs",
+      "goldman"
+    ]
+  },
+  {
+    "symbol": "BRK-B",
+    "name": "Berkshire Hathaway Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "BRK-B",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "berkshire",
+      "berkshire hathaway",
+      "buffett"
+    ]
+  },
+  {
+    "symbol": "ORCL",
+    "name": "Oracle Corporation",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "ORCL",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "oracle"
+    ]
+  },
+  {
+    "symbol": "CRM",
+    "name": "Salesforce Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "CRM",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "salesforce"
+    ]
+  },
+  {
+    "symbol": "ADBE",
+    "name": "Adobe Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "ADBE",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "adobe"
+    ]
+  },
+  {
+    "symbol": "AVGO",
+    "name": "Broadcom Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "AVGO",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "broadcom"
+    ]
+  },
+  {
+    "symbol": "TSM",
+    "name": "Taiwan Semiconductor Manufacturing",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "TSM",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "tsmc",
+      "taiwan semiconductor"
+    ]
+  },
+  {
+    "symbol": "ASML",
+    "name": "ASML Holding N.V.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "ASML",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "asml"
+    ]
+  },
+  {
+    "symbol": "MSTR",
+    "name": "MicroStrategy Incorporated",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "MSTR",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "microstrategy",
+      "strategy"
+    ]
+  },
+  {
+    "symbol": "COIN",
+    "name": "Coinbase Global Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "COIN",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "coinbase"
+    ]
+  },
+  {
+    "symbol": "PLTR",
+    "name": "Palantir Technologies Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "PLTR",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "palantir"
+    ]
+  },
+  {
+    "symbol": "UBER",
+    "name": "Uber Technologies Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "UBER",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "uber"
+    ]
+  },
+  {
+    "symbol": "ABNB",
+    "name": "Airbnb Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "ABNB",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "airbnb"
+    ]
+  },
+  {
+    "symbol": "SHOP",
+    "name": "Shopify Inc.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "SHOP",
+    "exchange": "NasdaqGS",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "shopify"
+    ]
+  },
+  {
+    "symbol": "SAN",
+    "name": "Banco Santander S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "SAN",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "santander",
+      "banco santander"
+    ]
+  },
+  {
+    "symbol": "BBVA",
+    "name": "Banco Bilbao Vizcaya Argentaria S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "BBVA",
+    "exchange": "NYSE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "bbva"
+    ]
+  },
+  {
+    "symbol": "TEF.MC",
+    "name": "Telefonica S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "TEF.MC",
+    "exchange": "Madrid",
+    "currency": "EUR",
+    "sessionTz": "Europe/Madrid",
+    "aliases": [
+      "telefonica"
+    ]
+  },
+  {
+    "symbol": "IBE.MC",
+    "name": "Iberdrola S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "IBE.MC",
+    "exchange": "Madrid",
+    "currency": "EUR",
+    "sessionTz": "Europe/Madrid",
+    "aliases": [
+      "iberdrola"
+    ]
+  },
+  {
+    "symbol": "ITX.MC",
+    "name": "Industria de Diseno Textil S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "ITX.MC",
+    "exchange": "Madrid",
+    "currency": "EUR",
+    "sessionTz": "Europe/Madrid",
+    "aliases": [
+      "inditex",
+      "zara"
+    ]
+  },
+  {
+    "symbol": "REP.MC",
+    "name": "Repsol S.A.",
+    "assetClass": "equity",
+    "provider": "yahoo",
+    "providerSymbol": "REP.MC",
+    "exchange": "Madrid",
+    "currency": "EUR",
+    "sessionTz": "Europe/Madrid",
+    "aliases": [
+      "repsol"
+    ]
+  },
+  {
+    "symbol": "QQQ",
+    "name": "Invesco QQQ Trust",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "QQQ",
+    "exchange": "NasdaqGM",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "nasdaq 100",
+      "nasdaq100",
+      "qqq"
+    ]
+  },
+  {
+    "symbol": "IWM",
+    "name": "iShares Russell 2000 ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "IWM",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "russell 2000",
+      "small caps"
+    ]
+  },
+  {
+    "symbol": "DIA",
+    "name": "SPDR Dow Jones Industrial Average ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "DIA",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "dow jones",
+      "dow"
+    ]
+  },
+  {
+    "symbol": "VTI",
+    "name": "Vanguard Total Stock Market ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "VTI",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "vanguard total market"
+    ]
+  },
+  {
+    "symbol": "VOO",
+    "name": "Vanguard S&P 500 ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "VOO",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "vanguard sp500",
+      "voo"
+    ]
+  },
+  {
+    "symbol": "VWCE.DE",
+    "name": "Vanguard FTSE All-World UCITS ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "VWCE.DE",
+    "exchange": "XETRA",
+    "currency": "EUR",
+    "sessionTz": "Europe/Berlin",
+    "aliases": [
+      "vwce",
+      "all world",
+      "ftse all world"
+    ]
+  },
+  {
+    "symbol": "GLD",
+    "name": "SPDR Gold Shares",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "GLD",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "oro",
+      "gold",
+      "gld"
+    ]
+  },
+  {
+    "symbol": "SLV",
+    "name": "iShares Silver Trust",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "SLV",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "plata",
+      "silver"
+    ]
+  },
+  {
+    "symbol": "USO",
+    "name": "United States Oil Fund LP",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "USO",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "petroleo",
+      "oil",
+      "crudo"
+    ]
+  },
+  {
+    "symbol": "TLT",
+    "name": "iShares 20+ Year Treasury Bond ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "TLT",
+    "exchange": "NasdaqGM",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "bonos largos",
+      "treasury 20",
+      "tlt"
+    ]
+  },
+  {
+    "symbol": "HYG",
+    "name": "iShares iBoxx High Yield Corporate Bond ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "HYG",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "high yield",
+      "bonos basura"
+    ]
+  },
+  {
+    "symbol": "EEM",
+    "name": "iShares MSCI Emerging Markets ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "EEM",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "emergentes",
+      "emerging markets"
+    ]
+  },
+  {
+    "symbol": "EWP",
+    "name": "iShares MSCI Spain ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "EWP",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "espania",
+      "spain",
+      "ibex"
+    ]
+  },
+  {
+    "symbol": "EWG",
+    "name": "iShares MSCI Germany ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "EWG",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "alemania",
+      "germany",
+      "dax"
+    ]
+  },
+  {
+    "symbol": "EWJ",
+    "name": "iShares MSCI Japan ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "EWJ",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "japon",
+      "japan",
+      "nikkei"
+    ]
+  },
+  {
+    "symbol": "SMH",
+    "name": "VanEck Semiconductor ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "SMH",
+    "exchange": "NasdaqGM",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "semiconductores",
+      "semiconductors",
+      "chips"
+    ]
+  },
+  {
+    "symbol": "XLE",
+    "name": "Energy Select Sector SPDR Fund",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "XLE",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "energia",
+      "energy sector"
+    ]
+  },
+  {
+    "symbol": "XLF",
+    "name": "Financial Select Sector SPDR Fund",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "XLF",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "financiero",
+      "financials"
+    ]
+  },
+  {
+    "symbol": "XLK",
+    "name": "Technology Select Sector SPDR Fund",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "XLK",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "tecnologia",
+      "technology sector"
+    ]
+  },
+  {
+    "symbol": "ARKK",
+    "name": "ARK Innovation ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "ARKK",
+    "exchange": "NYSE Arca",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "ark",
+      "arkk",
+      "cathie wood"
+    ]
+  },
+  {
+    "symbol": "IBIT",
+    "name": "iShares Bitcoin Trust ETF",
+    "assetClass": "etf",
+    "provider": "yahoo",
+    "providerSymbol": "IBIT",
+    "exchange": "NasdaqGM",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "bitcoin etf",
+      "ibit"
+    ]
+  },
+  {
+    "symbol": "^GSPC",
+    "name": "S&P 500 Index",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^GSPC",
+    "exchange": "SNP",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "gspc",
+      "indice sp500"
+    ]
+  },
+  {
+    "symbol": "^NDX",
+    "name": "Nasdaq 100 Index",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^NDX",
+    "exchange": "Nasdaq",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "ndx",
+      "indice nasdaq 100"
+    ]
+  },
+  {
+    "symbol": "^DJI",
+    "name": "Dow Jones Industrial Average",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^DJI",
+    "exchange": "DJI",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "dji",
+      "indice dow jones"
+    ]
+  },
+  {
+    "symbol": "^VIX",
+    "name": "CBOE Volatility Index",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^VIX",
+    "exchange": "CBOE",
+    "currency": "USD",
+    "sessionTz": "America/New_York",
+    "aliases": [
+      "vix",
+      "volatilidad",
+      "indice del miedo"
+    ]
+  },
+  {
+    "symbol": "^IBEX",
+    "name": "IBEX 35 Index",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^IBEX",
+    "exchange": "Madrid",
+    "currency": "EUR",
+    "sessionTz": "Europe/Madrid",
+    "aliases": [
+      "ibex 35",
+      "ibex35"
+    ]
+  },
+  {
+    "symbol": "^GDAXI",
+    "name": "DAX Index",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^GDAXI",
+    "exchange": "XETRA",
+    "currency": "EUR",
+    "sessionTz": "Europe/Berlin",
+    "aliases": [
+      "dax",
+      "dax 40"
+    ]
+  },
+  {
+    "symbol": "^STOXX50E",
+    "name": "EURO STOXX 50",
+    "assetClass": "index",
+    "provider": "yahoo",
+    "providerSymbol": "^STOXX50E",
+    "exchange": "STOXX",
+    "currency": "EUR",
+    "sessionTz": "Europe/Berlin",
+    "aliases": [
+      "eurostoxx",
+      "euro stoxx 50",
+      "stoxx 50"
+    ]
+  }
+]

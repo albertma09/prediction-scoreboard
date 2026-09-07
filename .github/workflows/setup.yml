@@ -1,0 +1,55 @@
+name: Puesta en marcha
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_backtest:
+        description: Ejecutar tambien el backtest historico
+        type: boolean
+        default: true
+
+concurrency:
+  group: database-write
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TZ: UTC
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Migraciones
+        run: npm run migrate
+
+      - name: Catalogo de instrumentos
+        run: npm run seed:instruments
+
+      - name: Registro de modelos
+        run: npm run register-models
+
+      - name: Backfill del universo puntuable
+        run: npm run ingest -- --backfill
+
+      - name: Precios del catalogo completo
+        run: npm run ingest -- --catalog --years=1 --quiet
+
+      - name: Consultas precalculadas
+        run: npm run consult
+
+      - name: Backtest historico
+        if: inputs.run_backtest
+        run: npm run backtest -- --label "backtest de puesta en marcha"
+
+      - name: Estado final
+        run: npm run status

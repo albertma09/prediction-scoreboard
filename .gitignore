@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+logs/
+ledger-anchors/*.json
+!ledger-anchors/.gitkeep
+panel/node_modules/
+panel/dist/
+panel/public/data/
+.vitest/
+coverage/
