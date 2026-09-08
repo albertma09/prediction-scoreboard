@@ -6,6 +6,7 @@ import { barsPerWindow, eventKey } from '../predictions/events.js';
 import type { Horizon } from '../predictions/events.js';
 import { clampProbability } from '../predictions/canonical.js';
 import { allModels } from '../models/registry.js';
+import { preferredRow } from './preference.js';
 
 const HORIZONS: Horizon[] = ['1d', '7d'];
 
@@ -214,9 +215,7 @@ export async function consultationsFor(instrumentId: number): Promise<Consultati
   const views: ConsultationView[] = [];
 
   for (const list of grouped.values()) {
-    const preferred =
-      list.find((row) => row.model_key === 'ewmaVol') ??
-      list.find((row) => row.model_key === 'climatology');
+    const preferred = preferredRow(list);
     if (!preferred) {
       continue;
     }

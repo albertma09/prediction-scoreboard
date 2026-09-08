@@ -81,8 +81,19 @@ de −0,0230 a −0,0058— pero eso no llegó al marcador: `tVolCal` es idénti
 - ⏸️ **Magnitud se queda sin recalibrar.** `ewmaVol` sigue siendo el modelo de magnitud.
 
 Ambos modelos descartados **permanecen registrados en `model_version` y sus
-puntuaciones siguen en `backtest_score` del run 3**. El registro es append-only: la
-prueba de que se descartaron por medición y no por intuición forma parte del histórico.
+puntuaciones siguen en `backtest_score` del run 3**, con ids 4 y 5.
+
+⚠️ **Pero su código nunca se commiteó.** Se escribieron, se midieron y se borraron
+dentro de la misma sesión, así que no existen en el histórico de git. Consecuencia: el
+`code_hash` que guardan sus filas de `model_version` **no se puede recalcular contra
+ningún código**, y por tanto el run 3 no es reproducible. Las puntuaciones son
+auditables; los modelos que las produjeron, no.
+
+Esto contradice el espíritu del principio 3.3. **Procedimiento correcto para la próxima
+vez: commitear todo modelo que llegue a emitir, incluidos los que se van a descartar, y
+retirarlo del catálogo en un commit posterior.** El borrado va después de la medición,
+nunca antes. Lo que se descarta es la participación del modelo en el catálogo, no la
+evidencia de que se probó.
 
 ### Confirmación (run 4)
 
@@ -103,6 +114,25 @@ Las dos colas quedan casi corregidas:
 | 0,1-0,2 | −0,0520 | −0,0172 |
 | 0,8-0,9 | +0,0880 | +0,0137 |
 | 0,9-1,0 | +0,0452 | +0,0083 |
+
+### Quien consume cada modelo
+
+La preferencia de modelo por tipo de evento vive en `src/consult/preference.ts` y la fija
+`MODEL_PREFERENCE_BY_EVENT`:
+
+| Evento | Modelo preferido | Por que |
+|---|---|---|
+| VOL | `volCal` | Es el unico con mejora medida |
+| MAG | `ewmaVol` | La recalibracion perjudica a 7 dias |
+| DIR | `climatology` | Ningun modelo tiene habilidad medida |
+
+`coinflip` no es preferido nunca: existe solo como baseline. Esa tabla esta fijada por
+`preference.test.ts`, para que no se pueda cambiar en silencio.
+
+El desplegable de la curva de calibracion del panel ya no lleva la lista de modelos
+escrita a mano: la deriva de los `slices` del scoreboard, asi que cualquier modelo nuevo
+aparece solo. El snapshot ya exportaba `calibration/<modelo>.json` para todo
+`allModels()`.
 
 ### Limitaciones conocidas
 
@@ -132,7 +162,22 @@ Las dos colas quedan casi corregidas:
    en cada emisión a partir del historial disponible en ese instante, que es lo que
    garantiza que no mire al futuro.
 
-5. **La t de Student sigue en `stats.ts`** (`studentTCdf`, `unitVarianceTScale`,
+5. **La ventana de ajuste no reproduce las semanas con festivo.** Los pares de
+   entrenamiento usan siempre exactamente `windowBars` retornos consecutivos, pero el
+   resolvedor acepta ventanas de hasta `ceil(0.6 · windowBars)` barras
+   (`minimumVolBars`). En renta variable, ETF e índices a 7 días, una semana con
+   festivo se puntúa con una volatilidad realizada calculada sobre 3-4 barras, un caso
+   que nunca aparece en el conjunto de ajuste. En cripto no ocurre (24/7). Los tests
+   solo cubren cripto.
+
+6. **Por debajo de 120 pares, `volCal` es idéntico a `ewmaVol`.** La pendiente cae al
+   valor neutro y ambos emiten el mismo número bit a bit. Eso son unas 193 barras, y la
+   emisión solo exige 67: un activo con poco historial produciría meses de predicciones
+   duplicadas bajo dos `model_version`, que en el scoreboard se leen como dos modelos
+   coincidiendo. En la práctica `promote` hace backfill de 3 años, así que el caso es
+   raro.
+
+7. **La t de Student sigue en `stats.ts`** (`studentTCdf`, `unitVarianceTScale`,
    `regularizedBetaI`) aunque ningún modelo activo la use, con sus tests. Está ahí para
    cuando se retome magnitud con más muestra. Si molesta, se borra sin afectar a nada.
 

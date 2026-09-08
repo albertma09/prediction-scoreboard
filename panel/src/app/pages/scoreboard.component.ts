@@ -9,6 +9,8 @@ import type {
   Slice,
 } from '../api.types';
 
+const DEFAULT_MODEL_ORDER: readonly string[] = ['volCal', 'ewmaVol', 'climatology', 'coinflip'];
+
 @Component({
   selector: 'app-scoreboard',
   standalone: true,
@@ -133,9 +135,9 @@ import type {
         <div class="card">
           <label for="model">Modelo</label>
           <select id="model" [ngModel]="modelKey()" (ngModelChange)="onModel($event)">
-            <option value="ewmaVol">ewmaVol</option>
-            <option value="climatology">climatology</option>
-            <option value="coinflip">coinflip</option>
+            @for (key of availableModels(); track key) {
+              <option [value]="key">{{ key }}</option>
+            }
           </select>
 
           @if (bins().length === 0) {
@@ -258,13 +260,18 @@ export class ScoreboardComponent {
   readonly board = signal<ScoreboardResponse | null>(null);
   readonly live = signal<{ available: boolean; slices: LiveSlice[] } | null>(null);
   readonly bins = signal<CalibrationBin[]>([]);
-  readonly modelKey = signal('ewmaVol');
+  readonly modelKey = signal('volCal');
   readonly eventFilter = signal('');
 
   readonly filtered = computed(() => {
     const slices = this.board()?.slices ?? [];
     const filter = this.eventFilter();
     return filter === '' ? slices : slices.filter((slice) => slice.eventType === filter);
+  });
+
+  readonly availableModels = computed(() => {
+    const keys = new Set((this.board()?.slices ?? []).map((slice) => slice.modelKey));
+    return keys.size === 0 ? [this.modelKey()] : [...keys].sort();
   });
 
   readonly nonEmptyBins = computed(() => this.bins().filter((bin) => bin.count > 0));
@@ -294,8 +301,14 @@ export class ScoreboardComponent {
 
   constructor() {
     this.data.scoreboard().subscribe({
-      next: (response) => this.board.set(response),
-      error: () => this.board.set({ source: 'backtest', available: false, slices: [] }),
+      next: (response) => {
+        this.board.set(response);
+        this.selectInitialModel();
+      },
+      error: () => {
+        this.board.set({ source: 'backtest', available: false, slices: [] });
+        this.loadCalibration(this.modelKey());
+      },
     });
 
     this.data.liveScoreboard().subscribe({
@@ -304,7 +317,16 @@ export class ScoreboardComponent {
       error: () => this.live.set({ available: false, slices: [] }),
     });
 
-    this.loadCalibration('ewmaVol');
+  }
+
+  private selectInitialModel(): void {
+    const available = this.availableModels();
+    const chosen =
+      DEFAULT_MODEL_ORDER.find((key) => available.includes(key)) ??
+      available[0] ??
+      this.modelKey();
+    this.modelKey.set(chosen);
+    this.loadCalibration(chosen);
   }
 
   onModel(value: string): void {
