@@ -70,6 +70,33 @@ describe('catalogo sembrado', () => {
       expect(categorySchema.options).toContain(seed.category);
     }
   });
+
+  it('el universo puntuable abarca varias categorias, no una sola repetida', () => {
+    const tracked = seeds.filter((seed) => seed.tracked);
+    const categorias = new Set(tracked.map((seed) => seed.category));
+
+    expect(categorias.size).toBeGreaterThanOrEqual(3);
+  });
+
+  it('ninguna categoria domina el universo puntuable por encima de la mitad', () => {
+    const tracked = seeds.filter((seed) => seed.tracked);
+    const cuenta = new Map<string, number>();
+    for (const seed of tracked) {
+      cuenta.set(seed.category, (cuenta.get(seed.category) ?? 0) + 1);
+    }
+
+    for (const [, n] of cuenta) {
+      expect(n / tracked.length).toBeLessThanOrEqual(0.5);
+    }
+  });
+
+  it('el universo puntuable mezcla activos que cotizan 24/7 con activos con sesion', () => {
+    const tracked = seeds.filter((seed) => seed.tracked);
+    const continuos = tracked.filter((seed) => seed.assetClass === 'crypto').length;
+
+    expect(continuos).toBeGreaterThan(0);
+    expect(tracked.length - continuos).toBeGreaterThan(0);
+  });
 });
 
 describe('fallbackCategory', () => {

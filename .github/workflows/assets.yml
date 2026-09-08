@@ -1,0 +1,103 @@
+name: Gestionar activos
+
+on:
+  workflow_dispatch:
+    inputs:
+      simbolos:
+        description: 'Simbolos separados por espacios (ej: GLD TLT KO)'
+        type: string
+        required: true
+      accion:
+        description: Que hacer con ellos
+        type: choice
+        required: true
+        default: promover
+        options:
+          - promover
+          - retirar
+
+concurrency:
+  group: database-write
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  gestionar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TZ: UTC
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Migraciones pendientes
+        run: npm run migrate
+
+      - name: Promover al universo puntuable
+        if: inputs.accion == 'promover'
+        env:
+          SIMBOLOS: ${{ inputs.simbolos }}
+        run: npm run promote -- $SIMBOLOS
+
+      - name: Retirar del universo puntuable
+        if: inputs.accion == 'retirar'
+        env:
+          SIMBOLOS: ${{ inputs.simbolos }}
+        run: npm run promote -- $SIMBOLOS --demote
+
+      - name: Precios del universo puntuable
+        run: npm run ingest
+
+      - name: Consultas precalculadas
+        run: npm run consult
+
+      - name: Verificar la cadena de hashes
+        run: npm run verify-ledger
+
+      - name: Exportar snapshot
+        run: npm run snapshot
+
+      - name: Dependencias del panel
+        run: npm --prefix panel ci
+
+      - name: Compilar panel
+        run: npm --prefix panel run build -- --base-href="/${{ github.event.repository.name }}/"
+
+      - name: Enrutado de una sola pagina
+        run: |
+          cp panel/dist/panel/browser/index.html panel/dist/panel/browser/404.html
+          test -s panel/dist/panel/browser/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: panel/dist/panel/browser
+
+      - name: Resumen
+        run: npm run status
+
+  deploy:
+    needs: gestionar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

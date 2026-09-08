@@ -449,7 +449,8 @@
     "sessionTz": "America/New_York",
     "aliases": [
       "exxon"
-    ]
+    ],
+    "tracked": true
   },
   {
     "symbol": "KO",
@@ -464,7 +465,8 @@
     "aliases": [
       "coca cola",
       "cocacola"
-    ]
+    ],
+    "tracked": true
   },
   {
     "symbol": "PEP",
@@ -1000,7 +1002,8 @@
       "oro",
       "gold",
       "gld"
-    ]
+    ],
+    "tracked": true
   },
   {
     "symbol": "SLV",
@@ -1047,7 +1050,8 @@
       "bonos largos",
       "treasury 20",
       "tlt"
-    ]
+    ],
+    "tracked": true
   },
   {
     "symbol": "HYG",
@@ -1093,7 +1097,8 @@
       "espania",
       "spain",
       "ibex"
-    ]
+    ],
+    "tracked": true
   },
   {
     "symbol": "EWG",
