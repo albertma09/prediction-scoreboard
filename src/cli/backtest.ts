@@ -1,5 +1,5 @@
 import { closePool } from '../db/pool.js';
-import { registerAllModels } from '../models/registry.js';
+import { allModels, registerAllModels } from '../models/registry.js';
 import { runBacktest } from '../backtest/run.js';
 import { buildSliceReports, calibrationFor, loadBacktestScores } from '../eval/report.js';
 
@@ -55,19 +55,28 @@ async function main(): Promise<void> {
     );
   }
 
-  console.log('');
-  console.log('=== CALIBRACION de ewmaVol (todos los eventos que soporta) ===');
-  const bins = calibrationFor(rows, 'ewmaVol');
-  console.log('bin           N      predicho  observado');
-  for (const bin of bins) {
-    if (bin.count === 0) {
+  for (const model of allModels().filter((candidate) => !candidate.isBaseline)) {
+    const bins = calibrationFor(rows, model.key);
+    if (bins.every((bin) => bin.count === 0)) {
       continue;
     }
-    console.log(
-      `${bin.lowerBound.toFixed(1)}-${bin.upperBound.toFixed(1)}   ` +
-        `${String(bin.count).padStart(6)}  ${bin.meanForecast.toFixed(4).padStart(8)}  ` +
-        `${bin.observedFrequency.toFixed(4).padStart(9)}`,
-    );
+
+    console.log('');
+    console.log(`=== CALIBRACION de ${model.key} (todos los eventos que soporta) ===`);
+    console.log('bin           N      predicho  observado  desvio');
+
+    for (const bin of bins) {
+      if (bin.count === 0) {
+        continue;
+      }
+      const drift = bin.meanForecast - bin.observedFrequency;
+      console.log(
+        `${bin.lowerBound.toFixed(1)}-${bin.upperBound.toFixed(1)}   ` +
+          `${String(bin.count).padStart(6)}  ${bin.meanForecast.toFixed(4).padStart(8)}  ` +
+          `${bin.observedFrequency.toFixed(4).padStart(9)}  ` +
+          `${(drift >= 0 ? '+' : '') + drift.toFixed(4)}`,
+      );
+    }
   }
 }
 

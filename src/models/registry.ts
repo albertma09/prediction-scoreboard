@@ -4,12 +4,14 @@ import type { CanonicalObject } from '../predictions/canonical.js';
 import { climatologyModel } from './climatology.js';
 import { coinflipModel } from './coinflip.js';
 import { ewmaVolModel } from './ewmaVol.js';
+import { volCalModel } from './volCal.js';
 import type { Model } from './base.js';
 
 const models = new Map<string, Model>([
   [coinflipModel.key, coinflipModel],
   [climatologyModel.key, climatologyModel],
   [ewmaVolModel.key, ewmaVolModel],
+  [volCalModel.key, volCalModel],
 ]);
 
 export function allModels(): Model[] {

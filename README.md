@@ -6,6 +6,7 @@ No opera. No mueve dinero. No da consejos de inversión. Es un instrumento de me
 
 Contexto y principios de diseño: [CLAUDE.md](CLAUDE.md).
 Reglas de emisión y resolución, congeladas: [docs/RESOLUTION-POLICY.md](docs/RESOLUTION-POLICY.md).
+Modelos probados, conservados y descartados: [docs/MODEL-DECISIONS.md](docs/MODEL-DECISIONS.md).
 
 ## Requisitos
 

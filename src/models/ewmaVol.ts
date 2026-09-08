@@ -4,7 +4,7 @@ import { chi2UpperTail, ewmaVariance, normalCdf } from '../util/stats.js';
 import type { EventType } from '../predictions/events.js';
 import type { Model, PredictContext } from './base.js';
 
-const LAMBDA = 0.94;
+export const LAMBDA = 0.94;
 
 export const ewmaVolModel: Model = {
   key: 'ewmaVol',

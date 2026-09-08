@@ -161,3 +161,143 @@ export function ewmaVariance(
 
   return variance;
 }
+
+const BETA_MAX_ITERATIONS = 300;
+const BETA_EPSILON = 1e-14;
+
+function betaContinuedFraction(a: number, b: number, x: number): number {
+  const qab = a + b;
+  const qap = a + 1;
+  const qam = a - 1;
+
+  let c = 1;
+  let d = 1 - (qab * x) / qap;
+  if (Math.abs(d) < FPMIN) {
+    d = FPMIN;
+  }
+  d = 1 / d;
+  let h = d;
+
+  for (let m = 1; m <= BETA_MAX_ITERATIONS; m += 1) {
+    const m2 = 2 * m;
+
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < FPMIN) {
+      d = FPMIN;
+    }
+    c = 1 + aa / c;
+    if (Math.abs(c) < FPMIN) {
+      c = FPMIN;
+    }
+    d = 1 / d;
+    h *= d * c;
+
+    aa = (-(a + m) * (qab + m) * x) / ((a + m2) * (qap + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < FPMIN) {
+      d = FPMIN;
+    }
+    c = 1 + aa / c;
+    if (Math.abs(c) < FPMIN) {
+      c = FPMIN;
+    }
+    d = 1 / d;
+
+    const delta = d * c;
+    h *= delta;
+
+    if (Math.abs(delta - 1) < BETA_EPSILON) {
+      break;
+    }
+  }
+
+  return h;
+}
+
+export function regularizedBetaI(a: number, b: number, x: number): number {
+  if (a <= 0 || b <= 0) {
+    throw new Error('los parametros de la beta incompleta deben ser positivos');
+  }
+  if (x <= 0) {
+    return 0;
+  }
+  if (x >= 1) {
+    return 1;
+  }
+
+  const front = Math.exp(
+    logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x),
+  );
+
+  if (x < (a + 1) / (a + b + 2)) {
+    return (front * betaContinuedFraction(a, b, x)) / a;
+  }
+  return 1 - (front * betaContinuedFraction(b, a, 1 - x)) / b;
+}
+
+export function studentTCdf(x: number, degreesOfFreedom: number): number {
+  if (degreesOfFreedom <= 0) {
+    throw new Error('los grados de libertad deben ser positivos');
+  }
+  if (!Number.isFinite(x)) {
+    throw new Error('argumento no finito en la t de Student');
+  }
+
+  const tail =
+    0.5 *
+    regularizedBetaI(
+      degreesOfFreedom / 2,
+      0.5,
+      degreesOfFreedom / (degreesOfFreedom + x * x),
+    );
+
+  return x >= 0 ? 1 - tail : tail;
+}
+
+export function unitVarianceTScale(degreesOfFreedom: number): number {
+  if (degreesOfFreedom <= 2) {
+    throw new Error('la t de Student solo tiene varianza finita con mas de 2 grados de libertad');
+  }
+  return Math.sqrt(degreesOfFreedom / (degreesOfFreedom - 2));
+}
+
+export function ewmaVarianceSeries(
+  returns: readonly number[],
+  lambda: number,
+  seedLength = EWMA_SEED_LENGTH,
+): number[] {
+  if (returns.length === 0) {
+    throw new Error('no se puede calcular EWMA sin retornos');
+  }
+  if (lambda <= 0 || lambda >= 1) {
+    throw new Error(`lambda fuera de rango: ${lambda}`);
+  }
+  if (seedLength < 1) {
+    throw new Error(`longitud de semilla invalida: ${seedLength}`);
+  }
+
+  const series: number[] = new Array<number>(returns.length);
+  let seedSumSquares = 0;
+
+  for (let index = 0; index < returns.length; index += 1) {
+    const value = returns[index];
+    if (value === undefined) {
+      throw new Error('serie de retornos invalida');
+    }
+
+    if (index < seedLength) {
+      seedSumSquares += value * value;
+      series[index] = seedSumSquares / (index + 1);
+      continue;
+    }
+
+    const previous = series[index - 1];
+    if (previous === undefined) {
+      throw new Error('serie EWMA incompleta');
+    }
+    series[index] = lambda * previous + (1 - lambda) * value * value;
+  }
+
+  return series;
+}
