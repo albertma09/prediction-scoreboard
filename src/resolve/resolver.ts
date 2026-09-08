@@ -4,8 +4,9 @@ import { parseEventSpec, parseHorizon } from '../predictions/parse.js';
 import { attemptResolution } from './window.js';
 import type { WindowBar } from './window.js';
 import type { AssetClass } from '../config/index.js';
+import { POLICY_VERSION, RESOLVER_VERSION } from '../config/policy.js';
 
-export const RESOLVER_VERSION = '2.0.0';
+export { RESOLVER_VERSION };
 
 interface PendingRow {
   id: number;
@@ -113,7 +114,7 @@ export async function resolvePending(limit = 5000): Promise<ResolveReport> {
     );
 
     const inputsJson = JSON.stringify({
-      policyVersion: '1',
+      policyVersion: POLICY_VERSION,
       resolverVersion: RESOLVER_VERSION,
       t0Date: row.t0_date,
       windowEndDate: row.window_end_date,

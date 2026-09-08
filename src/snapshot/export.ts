@@ -9,6 +9,7 @@ import { emissionHistory } from '../schedule/emit.js';
 import { readHead, verify } from '../ledger/ledger.js';
 import { allModels } from '../models/registry.js';
 import { SCHEMA_VERSION } from '../predictions/canonical.js';
+import { POLICY_VERSION } from '../config/policy.js';
 
 export const SNAPSHOT_VERSION = '1';
 
@@ -345,7 +346,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
   await track('meta.json', {
     snapshotVersion: SNAPSHOT_VERSION,
     payloadSchemaVersion: SCHEMA_VERSION,
-    policyVersion: '1',
+    policyVersion: POLICY_VERSION,
     generatedAt,
     instruments: instruments.length,
     trackedInstruments: instruments.filter((instrument) => instrument.is_tracked).length,

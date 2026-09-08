@@ -3,6 +3,7 @@ import { query, withTransaction } from '../db/pool.js';
 import { listTrackedInstruments } from '../instruments/catalog.js';
 import type { InstrumentRow } from '../instruments/catalog.js';
 import { buildEventSpecs, minimumHistoryBars } from '../predictions/build.js';
+import { POLICY_VERSION } from '../config/policy.js';
 import type { HistoryBar } from '../predictions/build.js';
 import {
   barsPerWindow,
@@ -62,7 +63,7 @@ export async function runBacktest(options: BacktestOptions): Promise<{
 
   const runRows = await query<{ id: number }>(
     `insert into backtest_run (label, policy_version, config)
-     values ($1, '1', $2::jsonb)
+     values ($1, $3, $2::jsonb)
      returning id`,
     [
       options.label,
@@ -72,6 +73,7 @@ export async function runBacktest(options: BacktestOptions): Promise<{
         models: models.map((model) => `${model.key}@${model.version}`),
         horizons: HORIZONS,
       }),
+      POLICY_VERSION,
     ],
   );
 
