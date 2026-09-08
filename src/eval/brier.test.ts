@@ -200,6 +200,57 @@ describe('murphyDecomposition', () => {
     expect(parts.resolution).toBeGreaterThan(0);
   });
 
+  it('cumple la identidad exacta con pronosticos continuos, incluido el residuo', () => {
+    const random = (seed: number): (() => number) => {
+      let state = seed;
+      return () => {
+        state = (state * 1103515245 + 12345) % 2147483648;
+        return state / 2147483648;
+      };
+    };
+    const next = random(99);
+    const items: ScoredPrediction[] = [];
+    for (let index = 0; index < 4000; index += 1) {
+      const probability = 0.05 + 0.9 * next();
+      items.push({ probability, outcome: next() < probability ? 1 : 0 });
+    }
+
+    const parts = murphyDecomposition(items);
+    expect(
+      parts.reliability - parts.resolution + parts.uncertainty + parts.withinBinResidual,
+    ).toBeCloseTo(parts.brier, 12);
+  });
+
+  it('no degenera con pronosticos todos distintos', () => {
+    const items: ScoredPrediction[] = Array.from({ length: 600 }, (_, index) => {
+      const probability = 0.2 + (0.6 * index) / 600;
+      return { probability, outcome: index % 5 === 0 ? 1 : 0 };
+    });
+
+    const parts = murphyDecomposition(items);
+    expect(parts.binCount).toBe(10);
+    expect(parts.reliability).toBeLessThan(parts.brier);
+    expect(Math.abs(parts.withinBinResidual)).toBeLessThan(0.05);
+  });
+
+  it('agrupa en los mismos bins que la curva de calibracion', () => {
+    const items: ScoredPrediction[] = Array.from({ length: 900 }, (_, index) => {
+      const probability = (index % 100) / 100;
+      return { probability, outcome: index % 3 === 0 ? 1 : 0 };
+    });
+
+    const parts = murphyDecomposition(items);
+    const bins = calibrationBins(items, parts.binCount).filter((bin) => bin.count > 0);
+    const total = bins.reduce((sum, bin) => sum + bin.count, 0);
+    const fromBins = bins.reduce(
+      (sum, bin) =>
+        sum + (bin.count / total) * (bin.meanForecast - bin.observedFrequency) ** 2,
+      0,
+    );
+
+    expect(parts.reliability).toBeCloseTo(fromBins, 12);
+  });
+
   it('un predictor que siempre dice la tasa base esta calibrado pero no resuelve nada', () => {
     const items: ScoredPrediction[] = Array.from({ length: 100 }, (_, index) => ({
       probability: 0.4,

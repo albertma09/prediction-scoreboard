@@ -54,14 +54,36 @@ Error de calibración agregado (fiabilidad, menor es mejor): `ewmaVol` 0,002308 
 ### Interpretación
 
 La recalibración **mejora la calibración en todos los eventos** pero **solo mejora la
-puntuación en volatilidad**. El motivo es la descomposición del Brier: la corrección
-acerca las probabilidades al centro, lo que reduce el error de calibración a cambio de
-perder resolución. En volatilidad a 7 días la calibración ganada compensa de sobra; en
-magnitud a 7 días, no.
+puntuación en volatilidad**. La descomposición del Brier por bins dice exactamente por
+qué, y la razón no es la que parecía a primera vista:
 
-Que magnitud a 7 días empeore es coherente con el tamaño de muestra: las ventanas de
-7 días se solapan, así que los ~670 pares de ajuste equivalen a ~95 observaciones
-independientes por activo. Ajustar una pendiente sobre eso ajusta ruido.
+| Evento | Modelo | Fiabilidad | Resolución |
+|---|---|---|---|
+| 1d VOL b=1 | `ewmaVol` | 0,003154 | 0,07909 |
+| 1d VOL b=1 | `volCal` | **0,002702** | 0,07909 |
+| 7d VOL b=5 | `ewmaVol` | 0,015611 | 0,04832 |
+| 7d VOL b=5 | `volCal` | **0,008196** | **0,05119** |
+| 7d VOL b=7 | `ewmaVol` | 0,011275 | 0,05179 |
+| 7d VOL b=7 | `volCal` | **0,005864** | **0,05206** |
+| 1d MAG k=1,0 | `ewmaVol` | 0,002212 | 0,00210 |
+| 7d MAG k=1,0 | `ewmaVol` | 0,000698 | 0,00222 |
+| 7d MAG k=1,5 | `ewmaVol` | 0,000168 | 0,00095 |
+
+Dos correcciones a lo que se supuso al principio:
+
+1. **La recalibración no cuesta resolución.** Se esperaba que acercar las probabilidades
+   al centro sacrificara atrevimiento. No ocurre: a 1 día la resolución es idéntica hasta
+   el quinto decimal, y a 7 días **sube ligeramente**. `volCal` gana en las dos mitades
+   del Brier a la vez, y de ahí que el BSS suba tanto.
+
+2. **Magnitud no empeoró por el tamaño de muestra, sino porque ya estaba calibrada.** Su
+   fiabilidad es de 0,0002 a 0,002, entre 5 y 50 veces menor que la de volatilidad. No
+   había nada que corregir, así que cualquier ajuste solo podía añadir ruido —agravado,
+   eso sí, porque las ventanas de 7 días se solapan y los ~670 pares equivalen a ~95
+   observaciones independientes por activo.
+
+Corolario para el futuro: **antes de recalibrar un evento, mirar su fiabilidad.** Si ya es
+del orden de 1e-4, no hay margen y el ajuste solo puede perjudicar.
 
 Las colas de Student hicieron lo previsto en su banda —el bin 0,0-0,1 pasó de un desvío
 de −0,0230 a −0,0058— pero eso no llegó al marcador: `tVolCal` es idéntico a
@@ -133,6 +155,41 @@ El desplegable de la curva de calibracion del panel ya no lleva la lista de mode
 escrita a mano: la deriva de los `slices` del scoreboard, asi que cualquier modelo nuevo
 aparece solo. El snapshot ya exportaba `calibration/<modelo>.json` para todo
 `allModels()`.
+
+### La calibración se mide dentro de un mismo tipo de evento
+
+Regla de medición, no de presentación. El error de calibración de un modelo **no se puede
+promediar entre tipos de evento distintos**, por dos razones:
+
+1. No todos los modelos emiten sobre los mismos eventos. `ewmaVol` cubre magnitud y
+   volatilidad; `volCal`, solo volatilidad. Promediar compara conjuntos distintos.
+2. Unos eventos son intrínsecamente más fáciles de calibrar que otros. Magnitud sale
+   0,0007 y volatilidad 0,006, un factor de 9 que no dice nada sobre el modelo.
+
+Juntando ambas cosas, la media agrupada de `ewmaVol` (0,002308) sale *mejor* que la de
+`volCal` (0,003776) solo porque la de `ewmaVol` está diluida con magnitud. Restringido a
+volatilidad, `volCal` gana por un 38,5%. **La comparación agrupada invierte la
+conclusión**, así que el panel ya no permite hacerla: obliga a elegir un tipo de evento.
+
+### La descomposición del Brier estaba degenerada
+
+`murphyDecomposition` agrupaba por probabilidad exacta (`probability.toFixed(10)`). Con un
+modelo continuo cada predicción caía en su propio grupo, y entonces la fiabilidad tendía
+al Brier y la resolución a la incertidumbre: para `ewmaVol` en VOL a 1 día daba una
+fiabilidad de 0,1695 cuando la real, agrupando en bins, es 0,0032. Un factor de 54.
+
+La identidad aritmética se cumplía, así que nada fallaba de forma visible; los números
+simplemente no significaban nada. Ahora agrupa en los mismos 10 bins que la curva de
+calibración, lo que además hace que las dos vistas del panel coincidan. Al binar aparece
+un término residual, expuesto como `withinBinResidual`, de modo que la identidad sigue
+siendo exacta y comprobable:
+
+```
+Brier = fiabilidad − resolución + incertidumbre + residuo
+```
+
+`brier.test.ts` fija esa identidad con pronósticos continuos y comprueba que la fiabilidad
+coincide con la que se obtiene de los bins de la curva.
 
 ### Limitaciones conocidas
 

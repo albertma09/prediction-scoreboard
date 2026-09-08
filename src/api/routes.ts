@@ -2,7 +2,13 @@ import { Router } from 'express';
 import { query } from '../db/pool.js';
 import { getInstrumentBySymbol, listTrackedInstruments } from '../instruments/catalog.js';
 import { searchInstruments } from '../instruments/search.js';
-import { buildSliceReports, calibrationFor, loadBacktestScores } from '../eval/report.js';
+import {
+  buildSliceReports,
+  calibrationByEvent,
+  calibrationFor,
+  loadBacktestScores,
+} from '../eval/report.js';
+import type { CalibrationBin } from '../eval/brier.js';
 import type { SliceReport } from '../eval/report.js';
 import { readHead, verify } from '../ledger/ledger.js';
 import { TtlCache } from './cache.js';
@@ -15,7 +21,10 @@ const scoreboardCache = new TtlCache<{
   slices: SliceReport[];
 }>(10 * 60_000);
 
-const calibrationCache = new TtlCache<unknown>(10 * 60_000);
+const calibrationCache = new TtlCache<{
+  bins: CalibrationBin[];
+  byEvent: Record<string, CalibrationBin[]>;
+}>(10 * 60_000);
 
 async function latestBacktestRun(): Promise<{
   id: number;
@@ -294,10 +303,20 @@ export function buildRouter(): Router {
 
       const payload = await calibrationCache.resolve(`${run.id}:${modelKey}`, async () => {
         const rows = await loadBacktestScores(run.id);
-        return calibrationFor(rows, modelKey, 10);
+        return {
+          bins: calibrationFor(rows, modelKey, 10),
+          byEvent: calibrationByEvent(rows, modelKey, 10),
+        };
       });
 
-      res.json({ source: 'backtest', available: true, modelKey, runId: run.id, bins: payload });
+      res.json({
+        source: 'backtest',
+        available: true,
+        modelKey,
+        runId: run.id,
+        bins: payload.bins,
+        byEvent: payload.byEvent,
+      });
     } catch (error) {
       next(error);
     }

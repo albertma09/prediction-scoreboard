@@ -22,7 +22,11 @@ export interface MurphyDecomposition {
   reliability: number;
   resolution: number;
   uncertainty: number;
+  withinBinResidual: number;
+  binCount: number;
 }
+
+export const DECOMPOSITION_BINS = 10;
 
 export function brierScore(probability: number, outcome: 0 | 1): number {
   if (!Number.isFinite(probability) || probability < 0 || probability > 1) {
@@ -77,17 +81,7 @@ export function calibrationBins(
   items: readonly ScoredPrediction[],
   binCount = 10,
 ): CalibrationBin[] {
-  if (binCount < 2) {
-    throw new Error('la curva de calibracion necesita al menos 2 bins');
-  }
-
-  const buckets: ScoredPrediction[][] = Array.from({ length: binCount }, () => []);
-
-  for (const item of items) {
-    const rawIndex = Math.floor(item.probability * binCount);
-    const index = Math.min(binCount - 1, Math.max(0, rawIndex));
-    buckets[index]?.push(item);
-  }
+  const buckets = bucketize(items, binCount);
 
   return buckets.map((bucket, index) => {
     const lowerBound = index / binCount;
@@ -106,33 +100,58 @@ export function calibrationBins(
   });
 }
 
-export function murphyDecomposition(items: readonly ScoredPrediction[]): MurphyDecomposition {
+function bucketize(
+  items: readonly ScoredPrediction[],
+  binCount: number,
+): ScoredPrediction[][] {
+  if (binCount < 2) {
+    throw new Error('la curva de calibracion necesita al menos 2 bins');
+  }
+
+  const buckets: ScoredPrediction[][] = Array.from({ length: binCount }, () => []);
+
+  for (const item of items) {
+    const rawIndex = Math.floor(item.probability * binCount);
+    const index = Math.min(binCount - 1, Math.max(0, rawIndex));
+    buckets[index]?.push(item);
+  }
+
+  return buckets;
+}
+
+export function murphyDecomposition(
+  items: readonly ScoredPrediction[],
+  binCount = DECOMPOSITION_BINS,
+): MurphyDecomposition {
   if (items.length === 0) {
     throw new Error('no se puede descomponer un conjunto vacio');
   }
 
   const overall = baseRate(items);
-  const groups = new Map<string, ScoredPrediction[]>();
-
-  for (const item of items) {
-    const key = item.probability.toFixed(10);
-    const group = groups.get(key);
-    if (group) {
-      group.push(item);
-    } else {
-      groups.set(key, [item]);
-    }
-  }
+  const buckets = bucketize(items, binCount);
 
   let reliability = 0;
   let resolution = 0;
+  let withinBinResidual = 0;
 
-  for (const group of groups.values()) {
-    const weight = group.length / items.length;
-    const forecast = group[0]?.probability ?? 0;
-    const observed = baseRate(group);
-    reliability += weight * (forecast - observed) ** 2;
+  for (const bucket of buckets) {
+    if (bucket.length === 0) {
+      continue;
+    }
+
+    const weight = bucket.length / items.length;
+    const meanForecast =
+      bucket.reduce((sum, item) => sum + item.probability, 0) / bucket.length;
+    const observed = baseRate(bucket);
+
+    reliability += weight * (meanForecast - observed) ** 2;
     resolution += weight * (observed - overall) ** 2;
+
+    for (const item of bucket) {
+      const deviation = item.probability - meanForecast;
+      withinBinResidual +=
+        (deviation * deviation - 2 * deviation * item.outcome) / items.length;
+    }
   }
 
   return {
@@ -140,6 +159,8 @@ export function murphyDecomposition(items: readonly ScoredPrediction[]): MurphyD
     reliability,
     resolution,
     uncertainty: overall * (1 - overall),
+    withinBinResidual,
+    binCount,
   };
 }
 

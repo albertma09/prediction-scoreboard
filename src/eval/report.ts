@@ -33,6 +33,7 @@ export interface SliceReport extends SliceKey {
   crossesZero: boolean;
   effectiveObservations: number;
   reliability: number;
+  withinBinResidual: number;
   resolution: number;
   uncertainty: number;
 }
@@ -182,6 +183,7 @@ export function buildSliceReports(
         crossesZero: interval.lower <= 0 && interval.upper >= 0,
         effectiveObservations: Math.round(observations.length / windowBars),
         reliability: murphy.reliability,
+        withinBinResidual: murphy.withinBinResidual,
         resolution: murphy.resolution,
         uncertainty: murphy.uncertainty,
       });
@@ -218,13 +220,20 @@ function pairObservations(
   return paired;
 }
 
+export const CALIBRATION_EVENT_TYPES = ['MAG', 'VOL', 'DIR'] as const;
+
 export function calibrationFor(
   rows: ScoreRow[],
   modelKey: string,
   binCount = 10,
+  eventType?: string,
 ): CalibrationBin[] {
   const items: ScoredPrediction[] = rows
-    .filter((row) => row.model_key === modelKey)
+    .filter(
+      (row) =>
+        row.model_key === modelKey &&
+        (eventType === undefined || row.event_type === eventType),
+    )
     .map((row) => ({
       probability: Number(row.probability),
       outcome: row.outcome === 1 ? 1 : 0,
@@ -235,4 +244,21 @@ export function calibrationFor(
   }
 
   return calibrationBins(items, binCount);
+}
+
+export function calibrationByEvent(
+  rows: ScoreRow[],
+  modelKey: string,
+  binCount = 10,
+): Record<string, CalibrationBin[]> {
+  const byEvent: Record<string, CalibrationBin[]> = {};
+
+  for (const eventType of CALIBRATION_EVENT_TYPES) {
+    const bins = calibrationFor(rows, modelKey, binCount, eventType);
+    if (bins.length > 0) {
+      byEvent[eventType] = bins;
+    }
+  }
+
+  return byEvent;
 }

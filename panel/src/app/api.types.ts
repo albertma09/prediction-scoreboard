@@ -130,6 +130,7 @@ export interface Slice {
   crossesZero: boolean;
   effectiveObservations: number;
   reliability: number;
+  withinBinResidual: number;
   resolution: number;
   uncertainty: number;
 }
@@ -175,6 +176,7 @@ export interface CalibrationResponse {
   modelKey?: string;
   runId?: number;
   bins: CalibrationBin[];
+  byEvent?: Record<string, CalibrationBin[]>;
 }
 
 export interface EmissionRun {

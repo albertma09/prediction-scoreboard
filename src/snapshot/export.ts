@@ -4,7 +4,12 @@ import { query } from '../db/pool.js';
 import { fallbackCategory, listAllInstruments } from '../instruments/catalog.js';
 import type { InstrumentCategory, InstrumentRow } from '../instruments/catalog.js';
 import { consultationsFor } from '../consult/generate.js';
-import { buildSliceReports, calibrationFor, loadBacktestScores } from '../eval/report.js';
+import {
+  buildSliceReports,
+  calibrationByEvent,
+  calibrationFor,
+  loadBacktestScores,
+} from '../eval/report.js';
 import { emissionHistory } from '../schedule/emit.js';
 import { readHead, verify } from '../ledger/ledger.js';
 import { allModels } from '../models/registry.js';
@@ -145,6 +150,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
         modelKey: model.key,
         runId: backtest.id,
         bins: calibrationFor(rows, model.key, 10),
+        byEvent: calibrationByEvent(rows, model.key, 10),
       });
     }
   } else {
@@ -155,6 +161,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
         available: false,
         modelKey: model.key,
         bins: [],
+        byEvent: {},
       });
     }
   }
