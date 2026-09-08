@@ -8,9 +8,15 @@ import type { Horizon } from '../predictions/events.js';
 import { clampProbability, hashFeatures } from '../predictions/canonical.js';
 import { allModels, registerAllModels } from '../models/registry.js';
 import { assertAscending, assertNoLookAhead } from '../models/base.js';
-import { append, EMISSION_TOLERANCE_MS, LedgerRejection } from '../ledger/ledger.js';
+import { append, LedgerRejection } from '../ledger/ledger.js';
 import { addDaysUtc } from '../util/dates.js';
-import { currentSlotUtc, minutesLate, slotDateOf, windowCanHaveSession } from './session.js';
+import {
+  historyCutoffUtc,
+  minutesUntilSlot,
+  nextSlotUtc,
+  slotDateOf,
+  windowCanHaveSession,
+} from './session.js';
 
 const HORIZONS: Horizon[] = ['1d', '7d'];
 const DUPLICATE_CONSTRAINTS = new Set([
@@ -22,12 +28,13 @@ const DUPLICATE_CONSTRAINTS = new Set([
 export interface EmissionReport {
   runId: number;
   slotDate: string;
-  status: 'ok' | 'partial' | 'skipped_late' | 'failed';
+  status: 'ok' | 'partial' | 'skipped_slot_open' | 'failed';
   emitted: number;
   alreadyPresent: number;
   skippedNoSession: number;
   skippedNoHistory: number;
-  minutesLate: number;
+  leadMinutes: number;
+  historyCutoff: string;
   notes: string[];
 }
 
@@ -44,7 +51,7 @@ async function loadHistory(instrumentId: number, beforeDate: string): Promise<Hi
 
 async function openRun(slotDate: string): Promise<number> {
   const rows = await query<{ id: number }>(
-    `insert into emission_run (slot_date) values ($1::date)
+    `insert into emission_run (slot_date, target_slot) values ($1::date, $1::date)
      on conflict (slot_date) do update set started_at = now(), status = 'running'
      returning id`,
     [slotDate],
@@ -60,7 +67,8 @@ async function closeRun(runId: number, report: Omit<EmissionReport, 'runId'>): P
   await query(
     `update emission_run
      set finished_at = now(), status = $2, emitted = $3, already_present = $4,
-         skipped_no_session = $5, skipped_no_history = $6, minutes_late = $7, error = $8
+         skipped_no_session = $5, skipped_no_history = $6, lead_minutes = $7,
+         target_slot = $8::date, error = $9
      where id = $1`,
     [
       runId,
@@ -69,7 +77,8 @@ async function closeRun(runId: number, report: Omit<EmissionReport, 'runId'>): P
       report.alreadyPresent,
       report.skippedNoSession,
       report.skippedNoHistory,
-      report.minutesLate,
+      report.leadMinutes,
+      report.slotDate,
       report.notes.length > 0 ? report.notes.join(' | ').slice(0, 2000) : null,
     ],
   );
@@ -84,7 +93,7 @@ function isDuplicate(error: unknown): boolean {
 }
 
 export interface EmitOptions {
-  allowLateEmissionMs?: number;
+  allowPastSlotMs?: number;
   allowClosedWindow?: boolean;
 }
 
@@ -92,9 +101,10 @@ export async function emitForSlot(
   now = Date.now(),
   options: EmitOptions = {},
 ): Promise<EmissionReport> {
-  const slot = currentSlotUtc(now);
+  const slot = nextSlotUtc(now);
   const slotDate = slotDateOf(slot);
-  const late = minutesLate(slot, now);
+  const lead = minutesUntilSlot(slot, now);
+  const historyCutoff = historyCutoffUtc(now);
   const runId = await openRun(slotDate);
 
   const report: Omit<EmissionReport, 'runId'> = {
@@ -104,16 +114,17 @@ export async function emitForSlot(
     alreadyPresent: 0,
     skippedNoSession: 0,
     skippedNoHistory: 0,
-    minutesLate: late,
+    leadMinutes: lead,
+    historyCutoff,
     notes: [],
   };
 
-  const tolerance = options.allowLateEmissionMs ?? EMISSION_TOLERANCE_MS;
-  if (now - slot.getTime() > tolerance) {
-    report.status = 'skipped_late';
+  const grace = options.allowPastSlotMs ?? 0;
+  if (slot.getTime() <= now - grace) {
+    report.status = 'skipped_slot_open';
     report.notes.push(
-      `el slot se abrio hace ${late} minutos y la tolerancia es ` +
-        `${Math.round(tolerance / 60_000)}; no se emite nada para no ver parte del movimiento`,
+      `la ventana del slot ${slotDate} ya esta abierta; no se emite nada ` +
+        'para no ver parte del movimiento',
     );
     await closeRun(runId, report);
     return { runId, ...report };
@@ -131,6 +142,7 @@ export async function emitForSlot(
         horizon,
         slot,
         slotDate,
+        historyCutoff,
         models,
         modelIds,
         report,
@@ -155,6 +167,7 @@ async function emitOne(
   horizon: Horizon,
   slot: Date,
   slotDate: string,
+  historyCutoff: string,
   models: ReturnType<typeof allModels>,
   modelIds: Map<string, number>,
   report: Omit<EmissionReport, 'runId'>,
@@ -171,7 +184,7 @@ async function emitOne(
     ...models.map((model) => model.minimumHistory(windowBars)),
   );
 
-  const history = await loadHistory(instrument.id, slotDate);
+  const history = await loadHistory(instrument.id, historyCutoff);
 
   if (history.length < required) {
     report.skippedNoHistory += 1;
@@ -182,7 +195,7 @@ async function emitOne(
   }
 
   assertAscending(history);
-  assertNoLookAhead(history, slotDate);
+  assertNoLookAhead(history, historyCutoff);
 
   const specs = buildEventSpecs({
     assetClass: instrument.asset_class,
@@ -219,9 +232,9 @@ async function emitOne(
         await append({
           instrumentId: instrument.id,
           modelVersionId,
-          ...(options.allowLateEmissionMs === undefined
+          ...(options.allowPastSlotMs === undefined
             ? {}
-            : { allowLateEmissionMs: options.allowLateEmissionMs }),
+            : { allowPastSlotMs: options.allowPastSlotMs }),
           ...(options.allowClosedWindow === undefined
             ? {}
             : { allowClosedWindow: options.allowClosedWindow }),
@@ -266,16 +279,16 @@ export async function emissionHistory(days = 30): Promise<
     slotDate: string;
     status: string;
     emitted: number;
-    minutesLate: number | null;
+    leadMinutes: number | null;
   }>
 > {
   const rows = await query<{
     slot_date: string;
     status: string;
     emitted: number;
-    minutes_late: number | null;
+    lead_minutes: number | null;
   }>(
-    `select slot_date::text as slot_date, status, emitted, minutes_late
+    `select slot_date::text as slot_date, status, emitted, lead_minutes
      from emission_run
      order by slot_date desc
      limit $1`,
@@ -286,6 +299,6 @@ export async function emissionHistory(days = 30): Promise<
     slotDate: row.slot_date,
     status: row.status,
     emitted: row.emitted,
-    minutesLate: row.minutes_late,
+    leadMinutes: row.lead_minutes,
   }));
 }

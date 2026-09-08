@@ -70,7 +70,7 @@ async function main(): Promise<void> {
       instrumentId,
       modelVersionId,
       draft: draftFor(probability, 1 + index * 0.5, 7 + index),
-      allowLateEmissionMs: RELAXED,
+      allowPastSlotMs: RELAXED,
     });
     appended.push(result);
     console.log(
@@ -92,7 +92,7 @@ async function main(): Promise<void> {
 
   try {
     const past = draftFor(0.5, 9, -1);
-    await append({ instrumentId, modelVersionId, draft: past, allowLateEmissionMs: RELAXED });
+    await append({ instrumentId, modelVersionId, draft: past, allowPastSlotMs: RELAXED });
     console.log('  TEST FALLIDO: acepto una ventana ya cerrada');
   } catch (error) {
     const kind = error instanceof LedgerRejection ? 'rechazado ok' : 'error inesperado';
@@ -104,7 +104,7 @@ async function main(): Promise<void> {
       instrumentId,
       modelVersionId,
       draft: draftFor(0.35, 1, 7),
-      allowLateEmissionMs: RELAXED,
+      allowPastSlotMs: RELAXED,
     });
     console.log('  TEST FALLIDO: acepto una emision duplicada');
   } catch (error) {
@@ -117,7 +117,7 @@ async function main(): Promise<void> {
 
   try {
     const other = draftFor(0.71, 1, 7);
-    await append({ instrumentId, modelVersionId, draft: other, allowLateEmissionMs: RELAXED });
+    await append({ instrumentId, modelVersionId, draft: other, allowPastSlotMs: RELAXED });
     console.log('  TEST FALLIDO: acepto otra probabilidad para la misma ventana');
   } catch (error) {
     const constraint =

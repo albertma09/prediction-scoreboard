@@ -50,7 +50,7 @@ async function main(): Promise<void> {
   for (let offset = days; offset >= 1; offset -= 1) {
     const slotMs = today - offset * DAY_MS;
     const report = await emitForSlot(slotMs, {
-      allowLateEmissionMs: RELAXED_TOLERANCE,
+      allowPastSlotMs: RELAXED_TOLERANCE,
       allowClosedWindow: true,
     });
     totalEmitted += report.emitted;

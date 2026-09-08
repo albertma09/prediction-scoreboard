@@ -5,7 +5,7 @@ import { attemptResolution } from './window.js';
 import type { WindowBar } from './window.js';
 import type { AssetClass } from '../config/index.js';
 
-export const RESOLVER_VERSION = '1.0.0';
+export const RESOLVER_VERSION = '2.0.0';
 
 interface PendingRow {
   id: number;

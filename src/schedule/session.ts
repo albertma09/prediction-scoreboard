@@ -1,5 +1,5 @@
 import type { AssetClass } from '../config/index.js';
-import { addDaysUtc, utcDateToMs } from '../util/dates.js';
+import { addDaysUtc, msToUtcDate, utcDateToMs } from '../util/dates.js';
 import type { Horizon } from '../predictions/events.js';
 
 export function isWeekendUtc(date: string): boolean {
@@ -30,13 +30,26 @@ export function windowCanHaveSession(
   return false;
 }
 
+const DAY_MS = 86_400_000;
+
 export function currentSlotUtc(now = Date.now()): Date {
-  const DAY_MS = 86_400_000;
   return new Date(Math.floor(now / DAY_MS) * DAY_MS);
+}
+
+export function nextSlotUtc(now = Date.now()): Date {
+  return new Date(Math.floor(now / DAY_MS) * DAY_MS + DAY_MS);
+}
+
+export function historyCutoffUtc(now = Date.now()): string {
+  return msToUtcDate(Math.floor(now / DAY_MS) * DAY_MS);
 }
 
 export function slotDateOf(slot: Date): string {
   return slot.toISOString().slice(0, 10);
+}
+
+export function minutesUntilSlot(slot: Date, now = Date.now()): number {
+  return Math.round((slot.getTime() - now) / 60_000);
 }
 
 export function minutesLate(slot: Date, now = Date.now()): number {

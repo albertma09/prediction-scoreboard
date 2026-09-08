@@ -11,7 +11,7 @@ export interface AppendInput {
   instrumentId: number;
   modelVersionId: number;
   draft: PredictionDraft;
-  allowLateEmissionMs?: number;
+  allowPastSlotMs?: number;
   allowClosedWindow?: boolean;
 }
 
@@ -32,18 +32,25 @@ export class LedgerRejection extends Error {
   }
 }
 
-export const EMISSION_TOLERANCE_MS = 30 * 60_000;
+export const MAX_LEAD_MS = 48 * 60 * 60_000;
 
-export async function append(input: AppendInput): Promise<AppendResult> {
-  const { draft } = input;
-  const now = Date.now();
+export interface TimingEscapes {
+  allowPastSlotMs?: number;
+  allowClosedWindow?: boolean;
+}
+
+export function assertEmissionTiming(
+  draft: PredictionDraft,
+  now: number,
+  escapes: TimingEscapes = {},
+): void {
   const t0 = draft.t0Utc.getTime();
 
   if (draft.windowEndUtc.getTime() <= t0) {
     throw new LedgerRejection('la ventana termina antes o al mismo tiempo que t0');
   }
 
-  if (draft.windowEndUtc.getTime() <= now && input.allowClosedWindow !== true) {
+  if (draft.windowEndUtc.getTime() <= now && escapes.allowClosedWindow !== true) {
     throw new LedgerRejection(
       `la ventana ya esta cerrada (${draft.windowEndUtc.toISOString()}); ` +
         'no se registra ninguna prediccion sobre un periodo pasado',
@@ -56,18 +63,33 @@ export async function append(input: AppendInput): Promise<AppendResult> {
     );
   }
 
-  if (t0 > now + 60_000) {
-    throw new LedgerRejection('t0 esta en el futuro; la emision debe registrarse en el momento');
-  }
-
-  const tolerance = input.allowLateEmissionMs ?? EMISSION_TOLERANCE_MS;
-  if (now - t0 > tolerance) {
+  const graceMs = escapes.allowPastSlotMs ?? 0;
+  if (t0 <= now - graceMs) {
     throw new LedgerRejection(
-      `el slot t0 ${draft.t0Utc.toISOString()} se abrio hace ` +
-        `${Math.round((now - t0) / 60_000)} minutos (tolerancia ${Math.round(tolerance / 60_000)}); ` +
-        'emitir con retraso permitiria ver parte del movimiento a predecir',
+      `la ventana del slot t0 ${draft.t0Utc.toISOString()} ya se abrio hace ` +
+        `${Math.round((now - t0) / 60_000)} minutos; predecir un periodo ya en curso ` +
+        'permitiria ver parte del movimiento a predecir',
     );
   }
+
+  if (t0 - now > MAX_LEAD_MS) {
+    throw new LedgerRejection(
+      `el slot t0 ${draft.t0Utc.toISOString()} esta a ` +
+        `${Math.round((t0 - now) / 3_600_000)} horas (maximo ${MAX_LEAD_MS / 3_600_000}); ` +
+        'no se precargan predicciones con tanta antelacion',
+    );
+  }
+}
+
+export async function append(input: AppendInput): Promise<AppendResult> {
+  const { draft } = input;
+
+  assertEmissionTiming(draft, Date.now(), {
+    ...(input.allowPastSlotMs === undefined ? {} : { allowPastSlotMs: input.allowPastSlotMs }),
+    ...(input.allowClosedWindow === undefined
+      ? {}
+      : { allowClosedWindow: input.allowClosedWindow }),
+  });
 
   const canonical = buildCanonicalPrediction(draft);
 

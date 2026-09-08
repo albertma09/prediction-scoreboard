@@ -6,6 +6,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      emitir:
+        description: Emitir predicciones para el slot de manana
+        type: boolean
+        default: false
 
 concurrency:
   group: database-write
@@ -24,9 +29,9 @@ jobs:
       TZ: UTC
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -39,14 +44,15 @@ jobs:
       - name: Precios del universo puntuable
         run: npm run ingest
 
-      - name: Emitir predicciones del slot de hoy
-        if: github.event_name == 'schedule'
+      - name: Emitir predicciones del slot siguiente
+        if: github.event_name == 'schedule' || inputs.emitir
         run: npm run predict
 
       - name: Resolver las que han vencido
         run: npm run resolve
 
       - name: Precios del catalogo completo
+        continue-on-error: true
         run: npm run ingest -- --catalog --years=1 --quiet
 
       - name: Consultas precalculadas

@@ -33,7 +33,7 @@ export interface MetaResponse {
   backtestObservations: number;
   backtestSlices: number;
   emissionRuns: number;
-  emissionSkippedLate: number;
+  emissionSkipped: number;
   emissionFailed: number;
   models: string[];
 }
@@ -181,13 +181,13 @@ export interface EmissionRun {
   slotDate: string;
   status: string;
   emitted: number;
-  minutesLate: number | null;
+  leadMinutes: number | null;
 }
 
 export interface EmissionsResponse {
   runs: EmissionRun[];
   attempted: number;
-  skippedLate: number;
+  skipped: number;
   failed: number;
   skipRate: number | null;
   note: string;

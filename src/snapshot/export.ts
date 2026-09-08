@@ -196,18 +196,19 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
 
   const emissions = await emissionHistory(60);
   const attempted = emissions.length;
-  const skipped = emissions.filter((run) => run.status === 'skipped_late').length;
+  const skipped = emissions.filter((run) => run.status.startsWith('skipped')).length;
   const failed = emissions.filter((run) => run.status === 'failed').length;
 
   await track('emissions.json', {
     runs: emissions,
     attempted,
-    skippedLate: skipped,
+    skipped,
     failed,
     skipRate: attempted === 0 ? null : skipped / attempted,
     note:
-      'un dia saltado es un hueco permanente: el registro rechaza emitir sobre una ventana ' +
-      'ya cerrada. se publica el porcentaje para que el hueco sea visible.',
+      'la emision se hace sobre el slot siguiente, asi que un retraso del planificador no ' +
+      'impide emitir. un dia saltado sigue siendo un hueco permanente: el registro rechaza ' +
+      'emitir sobre una ventana ya abierta. se publica el porcentaje para que el hueco sea visible.',
   });
 
   const [chain, head] = await Promise.all([verify(), readHead()]);
@@ -354,7 +355,7 @@ export async function exportSnapshot(root: string): Promise<SnapshotReport> {
     backtestObservations: backtest?.observations ?? 0,
     backtestSlices,
     emissionRuns: attempted,
-    emissionSkippedLate: skipped,
+    emissionSkipped: skipped,
     emissionFailed: failed,
     models: allModels().map((model) => `${model.key}@${model.version}`),
   });
